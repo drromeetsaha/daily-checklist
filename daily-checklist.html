@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Checklist - Doc's Schedule</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+            padding: 30px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 20px;
+        }
+
+        .date {
+            font-size: 28px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .day {
+            font-size: 18px;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .stats {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stat-number {
+            font-weight: bold;
+            color: #667eea;
+            font-size: 18px;
+        }
+
+        .tasks-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .task {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            border-left: 4px solid #667eea;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .task:hover {
+            background: #eef0f7;
+            transform: translateX(5px);
+        }
+
+        .task.completed {
+            background: #e8f5e9;
+            border-left-color: #4caf50;
+            opacity: 0.7;
+        }
+
+        .task.completed .time,
+        .task.completed .description {
+            color: #999;
+            text-decoration: line-through;
+        }
+
+        .checkbox {
+            width: 24px;
+            height: 24px;
+            border: 2px solid #667eea;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .task.completed .checkbox {
+            background: #4caf50;
+            border-color: #4caf50;
+            color: white;
+        }
+
+        .task-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-width: 0;
+        }
+
+        .time {
+            font-size: 12px;
+            font-weight: 600;
+            color: #667eea;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .description {
+            font-size: 15px;
+            color: #333;
+            line-height: 1.4;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #ffd700;
+            color: #333;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 8px;
+            margin-top: 4px;
+        }
+
+        .badge.teaching {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .badge.learning {
+            background: #4ecdc4;
+            color: white;
+        }
+
+        .badge.rest {
+            background: #95e1d3;
+            color: #333;
+        }
+
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            color: #999;
+            font-size: 12px;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #eee;
+            border-radius: 3px;
+            margin-top: 15px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+
+        .reset-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            color: #666;
+            transition: all 0.3s ease;
+        }
+
+        .reset-btn:hover {
+            background: #e0e0e0;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+                border-radius: 16px;
+            }
+
+            .date {
+                font-size: 24px;
+            }
+
+            .task {
+                padding: 12px;
+                gap: 12px;
+            }
+
+            .stats {
+                flex-direction: column;
+                gap: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="date" id="dateDisplay"></div>
+            <div class="day" id="dayDisplay"></div>
+            <div class="stats">
+                <div class="stat">
+                    <span>Completed:</span>
+                    <span class="stat-number" id="completedCount">0</span>
+                </div>
+                <div class="stat">
+                    <span>Total:</span>
+                    <span class="stat-number" id="totalCount">0</span>
+                </div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+        </div>
+
+        <div class="tasks-list" id="tasksList"></div>
+
+        <button class="reset-btn" onclick="resetDay()">Reset Today's Progress</button>
+
+        <div class="footer">
+            Last updated: <span id="lastUpdate"></span>
+        </div>
+    </div>
+
+    <script>
+        // Today's schedule - complete hourly breakdown for each day
+        const schedules = {
+            0: [ // Sunday
+                { time: "5:15-6:00 AM", task: "Wake up, freshen up, feed puppy", type: "routine" },
+                { time: "6:00-6:45 AM", task: "Workout", type: "priority" },
+                { time: "6:45-12:00 PM", task: "🔥 EXTENDED LEARNING & DEEP WORK BLOCK", type: "learning" },
+                { time: "12:00-1:00 PM", task: "Lunch break", type: "routine" },
+                { time: "1:00-5:00 PM", task: "🔥 EXTENDED LEARNING & DEEP WORK BLOCK", type: "learning" },
+                { time: "5:00-6:00 PM", task: "Rest / personal care", type: "routine" },
+                { time: "6:00-7:00 PM", task: "Stock Analysis + ChatRoom (if needed)", type: "learning" },
+                { time: "7:00-7:15 PM", task: "BREAK", type: "rest" },
+                { time: "7:15-7:45 PM", task: "A.L. Brooks Trading View", type: "learning" },
+                { time: "7:45-8:00 PM", task: "BREAK", type: "rest" },
+                { time: "8:00-8:45 PM", task: "Trading Book Reading", type: "learning" },
+                { time: "8:45-9:00 PM", task: "BREAK", type: "rest" },
+                { time: "9:00-9:45 PM", task: "Personal Dev Reading (Hyperfocus)", type: "learning" },
+                { time: "9:45-10:00 PM", task: "BREAK", type: "rest" },
+                { time: "10:00-10:30 PM", task: "Wind down + Sleep prep", type: "routine" },
+                { time: "10:30 PM", task: "SLEEP", type: "rest" }
+            ],
+            1: [ // Monday
+                { time: "5:15-6:00 AM", task: "Wake up, freshen up, feed puppy", type: "routine" },
+                { time: "6:00-6:45 AM", task: "Workout", type: "priority" },
+                { time: "6:45-7:00 AM", task: "Personal care", type: "routine" },
+                { time: "7:00-7:45 AM", task: "ChatRoom Management", type: "teaching" },
+                { time: "7:45-8:40 AM", task: "Get ready, breakfast", type: "routine" },
+                { time: "8:40-9:00 AM", task: "Office commute", type: "routine" },
+                { time: "9:00-10:00 AM", task: "🎓 PLANTATION TECHNOLOGY (Forestry) - PG 4th", type: "teaching" },
+                { time: "10:00-12:30 PM", task: "Free time on campus", type: "routine" },
+                { time: "12:30-1:30 PM", task: "ChatRoom Management", type: "teaching" },
+                { time: "1:30-5:20 PM", task: "On campus / office time", type: "routine" },
+                { time: "5:20-5:30 PM", task: "Office commute", type: "routine" },
+                { time: "5:30-6:00 PM", task: "Rest, freshen up", type: "routine" },
+                { time: "6:00-7:00 PM", task: "ChatRoom Management + Stock Analysis", type: "teaching" },
+                { time: "7:00-7:15 PM", task: "BREAK", type: "rest" },
+                { time: "7:15-7:45 PM", task: "A.L. Brooks Trading View", type: "learning" },
+                { time: "7:45-8:00 PM", task: "BREAK", type: "rest" },
+                { time: "8:00-8:30 PM", task: "Dinner", type: "routine" },
+                { time: "8:30-9:15 PM", task: "Trading Book Reading", type: "learning" },
+                { time: "9:15-9:30 PM", task: "BREAK", type: "rest" },
+                { time: "9:30-10:15 PM", task: "Personal Dev Reading (Hyperfocus)", type: "learning" },
+                { time: "10:15-10:30 PM", task: "Wind down + Sleep prep", type: "routine" },
+                { time: "10:30 PM", task: "SLEEP", type: "rest" }
+            ],
+            2: [ // Tuesday
+                { time: "5:15-6:00 AM", task: "Wake up, freshen up, feed puppy", type: "routine" },
+                { time: "6:00-6:45 AM", task: "Workout", type: "priority" },
+                { time: "6:45-7:00 AM", task: "Personal care", type: "routine" },
+                { time: "7:00-7:45 AM", task: "ChatRoom Management", type: "teaching" },
+                { time: "7:45-8:40 AM", task: "Get ready, breakfast", type: "routine" },
+                { time: "8:40-9:00 AM", task: "Office commute", type: "routine" },
+                { time: "9:00-10:00 AM", task: "🎓 PLANTATION TECHNOLOGY (Forestry) - PG 4th", type: "teaching" },
+                { time: "10:00-12:30 PM", task: "Free time on campus", type: "routine" },
+                { time: "12:30-1:30 PM", task: "ChatRoom Management", type: "teaching" },
+                { time: "1:30-2:45 PM", task: "On campus / office time", type: "routine" },
+                { time: "2:45-3:40 PM", task: "🎓 MINOR - V (Botany) - UG 4th", type: "teaching" },
+                { time: "3:40-5:20 PM", task: "On campus / office time", type: "routine" },
+                { time: "5:20-5:30 PM", task: "Office commute", type: "routine" },
+                { time: "5:30-6:00 PM", task: "Rest, freshen up", type: "routine" },
+                { time: "6:00-7:00 PM", task: "ChatRoom Management + Stock Analysis", type: "teaching" },
+                { time: "7:00-7:15 PM", task: "BREAK", type: "rest" },
+                { time: "7:15-7:45 PM", task: "A.L. Brooks Trading View", type: "learning" },
+                { time: "7:45-8:00 PM", task: "BREAK", type: "rest" },
+                { time: "8:00-8:30 PM", task: "Dinner", type: "routine" },
+                { time: "8:30-9:15 PM", task: "Trading Book Reading", type: "learning" },
+                { time: "9:15-9:30 PM", task: "BREAK", type: "rest" },
+                { time: "9:30-10:15 PM", task: "Personal Dev Reading (Hyperfocus)", type: "learning" },
+                { time: "10:15-10:30 PM", task: "Wind down + Sleep prep", type: "routine" },
+                { time: "10:30 PM", task: "SLEEP", type: "rest" }
+            ],
+            3: [ // Wednesday
+                { time: "5:15-6:00 AM", task: "Wake up, freshen up, feed puppy", type: "routine" },
+                { time: "6:00-6:45 AM", task: "Workout", type: "priority" },
+                { time: "6:45-7:00 AM", task: "Personal care", type: "routine" },
+                { time: "7:00-7:45 AM", task: "ChatRoom Management", type: "teaching" },
+                { time: "7:45-8:40 AM", task: "Get ready, breakfast", type: "routine" },
+                { time: "8:40-9:00 AM", task: "Office commute", type: "routine" },
+                { time: "9:00-10:00 AM", task: "🎓 PLANTATION TECHNOLOGY (Forestry) - PG 4th", type: "teaching" },
+                { time: "10:00-11:00 AM", task: "Free time on campus", type: "routine" },
+                { time: "11:00-12:00 PM", task: "🎓 MINOR - V (Botany) - UG 4th", type: "teaching" },
+                { time: "12:00-12:30 PM", task: "Free time on campus", type: "routine" },
+                { time: "12:30-1:30 PM", task: "ChatRoom Management", type: "teaching" },
+                { time: "1:30-5:20 PM", task: "On campus / office time", type: "routine" },
+                { time: "5:20-5:30 PM", task: "Office commute", type: "routine" },
+                { time: "5:30-6:00 PM", task: "Rest, freshen up", type: "routine" },
+                { time: "6:00-7:00 PM", task: "ChatRoom Management + Stock Analysis", type: "teaching" },
+                { time: "7:00-7:15 PM", task: "BREAK", type: "rest" },
+                { time: "7:15-7:45 PM", task: "A.L. Brooks Trading View", type: "learning" },
+                { time: "7:45-8:00 PM", task: "BREAK", type: "rest" },
+                { time: "8:00-8:30 PM", task: "Dinner", type: "routine" },
+                { time: "8:30-9:15 PM", task: "Trading Book Reading", type: "learning" },
+                { time: "9:15-9:30 PM", task: "BREAK", type: "rest" },
+                { time: "9:30-10:15 PM", task: "Personal Dev Reading (Hyperfocus)", type: "learning" },
+                { time: "10:15-10:30 PM", task: "Wind down + Sleep prep", type: "routine" },
+                { time: "10:30 PM", task: "SLEEP", type: "rest" }
+            ],
+            4: [ // Thursday
+                { time: "5:15-6:00 AM", task: "Wake up, freshen up, feed puppy", type: "routine" },
+                { time: "6:00-6:45 AM", task: "Workout", type: "priority" },
+                { time: "6:45-7:00 AM", task: "Personal care", type: "routine" },
+                { time: "7:00-7:45 AM", task: "ChatRoom Management", type: "teaching" },
+                { time: "7:45-12:30 PM", task: "🔥 EXTENDED LEARNING BLOCK / Free Time", type: "learning" },
+                { time: "12:30-1:30 PM", task: "ChatRoom Management", type: "teaching" },
+                { time: "1:30-3:40 PM", task: "Free time / campus work", type: "routine" },
+                { time: "3:40-4:35 PM", task: "🎓 FOREST MANAGEMENT (Forestry) - UG 4th", type: "teaching" },
+                { time: "4:35-5:20 PM", task: "On campus / travel", type: "routine" },
+                { time: "5:20-5:30 PM", task: "Office commute", type: "routine" },
+                { time: "5:30-6:00 PM", task: "Rest, freshen up", type: "routine" },
+                { time: "6:00-7:00 PM", task: "ChatRoom Management + Stock Analysis", type: "teaching" },
+                { time: "7:00-7:15 PM", task: "BREAK", type: "rest" },
+                { time: "7:15-7:45 PM", task: "A.L. Brooks Trading View", type: "learning" },
+                { time: "7:45-8:00 PM", task: "BREAK", type: "rest" },
+                { time: "8:00-8:30 PM", task: "Dinner", type: "routine" },
+                { time: "8:30-9:15 PM", task: "Trading Book Reading", type: "learning" },
+                { time: "9:15-9:30 PM", task: "BREAK", type: "rest" },
+                { time: "9:30-10:15 PM", task: "Personal Dev Reading (Hyperfocus)", type: "learning" },
+                { time: "10:15-10:30 PM", task: "Wind down + Sleep prep", type: "routine" },
+                { time: "10:30 PM", task: "SLEEP", type: "rest" }
+            ],
+            5: [ // Friday
+                { time: "5:15-6:00 AM", task: "Wake up, freshen up, feed puppy", type: "routine" },
+                { time: "6:00-6:45 AM", task: "Workout", type: "priority" },
+                { time: "6:45-7:00 AM", task: "Personal care", type: "routine" },
+                { time: "7:00-7:45 AM", task: "ChatRoom Management", type: "teaching" },
+                { time: "7:45-8:40 AM", task: "Get ready, breakfast", type: "routine" },
+                { time: "8:40-9:00 AM", task: "Office commute", type: "routine" },
+                { time: "9:00-10:00 AM", task: "🎓 FOREST MANAGEMENT (Forestry) - UG 4th", type: "teaching" },
+                { time: "10:00-11:00 AM", task: "🎓 MINOR - V (Botany) - UG 4th", type: "teaching" },
+                { time: "11:00-12:00 PM", task: "🎓 PHD COURSEWORK - UG 4th", type: "teaching" },
+                { time: "12:00-12:30 PM", task: "Campus / on campus", type: "routine" },
+                { time: "12:30-1:30 PM", task: "ChatRoom Management", type: "teaching" },
+                { time: "1:30-5:20 PM", task: "🔥 EXTENDED LEARNING BLOCK / Free Time", type: "learning" },
+                { time: "5:20-5:30 PM", task: "Office commute", type: "routine" },
+                { time: "5:30-6:00 PM", task: "Rest, freshen up", type: "routine" },
+                { time: "6:00-7:00 PM", task: "ChatRoom Management + Stock Analysis", type: "teaching" },
+                { time: "7:00-7:15 PM", task: "BREAK", type: "rest" },
+                { time: "7:15-7:45 PM", task: "A.L. Brooks Trading View", type: "learning" },
+                { time: "7:45-8:00 PM", task: "BREAK", type: "rest" },
+                { time: "8:00-8:30 PM", task: "Dinner", type: "routine" },
+                { time: "8:30-9:15 PM", task: "Trading Book Reading", type: "learning" },
+                { time: "9:15-9:30 PM", task: "BREAK", type: "rest" },
+                { time: "9:30-10:15 PM", task: "Personal Dev Reading (Hyperfocus)", type: "learning" },
+                { time: "10:15-10:30 PM", task: "Wind down + Sleep prep", type: "routine" },
+                { time: "10:30 PM", task: "SLEEP", type: "rest" }
+            ],
+            6: [ // Saturday
+                { time: "5:15-6:00 AM", task: "Wake up, freshen up, feed puppy", type: "routine" },
+                { time: "6:00-6:45 AM", task: "Workout", type: "priority" },
+                { time: "6:45-12:00 PM", task: "🔥 EXTENDED LEARNING & DEEP WORK BLOCK", type: "learning" },
+                { time: "12:00-1:00 PM", task: "Lunch break", type: "routine" },
+                { time: "1:00-5:00 PM", task: "🔥 EXTENDED LEARNING & DEEP WORK BLOCK", type: "learning" },
+                { time: "5:00-6:00 PM", task: "Rest / personal care", type: "routine" },
+                { time: "6:00-7:00 PM", task: "Stock Analysis + ChatRoom (if needed)", type: "learning" },
+                { time: "7:00-7:15 PM", task: "BREAK", type: "rest" },
+                { time: "7:15-7:45 PM", task: "A.L. Brooks Trading View", type: "learning" },
+                { time: "7:45-8:00 PM", task: "BREAK", type: "rest" },
+                { time: "8:00-8:45 PM", task: "Trading Book Reading", type: "learning" },
+                { time: "8:45-9:00 PM", task: "BREAK", type: "rest" },
+                { time: "9:00-9:45 PM", task: "Personal Dev Reading (Hyperfocus)", type: "learning" },
+                { time: "9:45-10:00 PM", task: "BREAK", type: "rest" },
+                { time: "10:00-10:30 PM", task: "Wind down + Sleep prep", type: "routine" },
+                { time: "10:30 PM", task: "SLEEP", type: "rest" }
+            ]
+        };
+
+        const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+        function formatDate() {
+            const today = new Date();
+            const dateStr = today.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+            const dayStr = days[today.getDay()];
+            return { dateStr, dayStr, dayIndex: today.getDay() };
+        }
+
+        function loadTasks() {
+            const { dateStr, dayStr, dayIndex } = formatDate();
+            const tasks = schedules[dayIndex];
+
+            document.getElementById('dateDisplay').textContent = dateStr;
+            document.getElementById('dayDisplay').textContent = dayStr.toUpperCase();
+
+            const tasksList = document.getElementById('tasksList');
+            tasksList.innerHTML = '';
+
+            tasks.forEach((task, index) => {
+                const taskEl = document.createElement('div');
+                const taskId = `task-${dayIndex}-${index}`;
+                const isCompleted = localStorage.getItem(taskId) === 'true';
+
+                taskEl.className = `task ${isCompleted ? 'completed' : ''}`;
+                taskEl.innerHTML = `
+                    <div class="checkbox" onclick="toggleTask('${taskId}', this.parentElement)">
+                        ${isCompleted ? '✓' : ''}
+                    </div>
+                    <div class="task-content">
+                        <div class="time">${task.time}</div>
+                        <div class="description">
+                            ${task.task}
+                            <span class="badge ${task.type === 'teaching' ? 'teaching' : task.type === 'learning' ? 'learning' : 'rest'}">
+                                ${task.type.charAt(0).toUpperCase() + task.type.slice(1)}
+                            </span>
+                        </div>
+                    </div>
+                `;
+                tasksList.appendChild(taskEl);
+
+                if (isCompleted) {
+                    taskEl.classList.add('completed');
+                }
+            });
+
+            updateStats(tasks);
+            updateLastUpdate();
+        }
+
+        function toggleTask(taskId, taskEl) {
+            const isCompleted = localStorage.getItem(taskId) === 'true';
+            localStorage.setItem(taskId, !isCompleted);
+
+            const { dayIndex } = formatDate();
+            const tasks = schedules[dayIndex];
+            loadTasks();
+        }
+
+        function updateStats(tasks) {
+            const { dayIndex } = formatDate();
+            let completed = 0;
+
+            tasks.forEach((_, index) => {
+                const taskId = `task-${dayIndex}-${index}`;
+                if (localStorage.getItem(taskId) === 'true') {
+                    completed++;
+                }
+            });
+
+            const total = tasks.length;
+            const percentage = (completed / total) * 100;
+
+            document.getElementById('completedCount').textContent = completed;
+            document.getElementById('totalCount').textContent = total;
+            document.getElementById('progressFill').style.width = percentage + '%';
+        }
+
+        function resetDay() {
+            const { dayIndex } = formatDate();
+            const tasks = schedules[dayIndex];
+
+            if (confirm('Reset all tasks for today?')) {
+                tasks.forEach((_, index) => {
+                    const taskId = `task-${dayIndex}-${index}`;
+                    localStorage.removeItem(taskId);
+                });
+                loadTasks();
+            }
+        }
+
+        function updateLastUpdate() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+            document.getElementById('lastUpdate').textContent = timeStr;
+        }
+
+        // Load tasks when page loads
+        window.addEventListener('load', loadTasks);
+
+        // Reset daily tasks at midnight
+        setInterval(() => {
+            const now = new Date();
+            if (now.getHours() === 0 && now.getMinutes() === 0) {
+                loadTasks();
+            }
+        }, 60000); // Check every minute
+    </script>
+</body>
+</html>
