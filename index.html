@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dr. Romeet Saha's Daily To Do List</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 50%, #2d2d2d 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Decorative side elements */
+        .charm {
+            position: fixed;
+            font-size: 40px;
+            opacity: 0.15;
+            pointer-events: none;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .charm-left-1 {
+            left: 20px;
+            top: 10%;
+            animation-delay: 0s;
+        }
+
+        .charm-left-2 {
+            left: 30px;
+            top: 50%;
+            animation-delay: 1s;
+        }
+
+        .charm-right-1 {
+            right: 20px;
+            top: 15%;
+            animation-delay: 2s;
+        }
+
+        .charm-right-2 {
+            right: 30px;
+            top: 60%;
+            animation-delay: 3s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(20px);
+            }
+        }
+
+        .container {
+            background: linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%);
+            border-radius: 24px;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(212, 175, 55, 0.1);
+            max-width: 680px;
+            width: 100%;
+            padding: 50px 40px;
+            border: 1px solid rgba(212, 175, 55, 0.15);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.3), transparent);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 35px;
+            border-bottom: 2px solid rgba(212, 175, 55, 0.3);
+            padding-bottom: 30px;
+        }
+
+        .title {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: #d4af37;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        .date {
+            font-size: 32px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 8px;
+            font-family: 'Playfair Display', serif;
+            letter-spacing: 0.5px;
+        }
+
+        .day {
+            font-size: 16px;
+            color: #b0b0b0;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+        }
+
+        .quote-section {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.08) 0%, rgba(212, 175, 55, 0.02) 100%);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 25px;
+            text-align: center;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .quote-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 16px;
+            color: #d4af37;
+            font-style: italic;
+            line-height: 1.6;
+            font-weight: 600;
+        }
+
+        .quote-author {
+            font-size: 12px;
+            color: #888;
+            margin-top: 10px;
+            font-weight: 500;
+        }
+
+        .stats {
+            display: flex;
+            gap: 40px;
+            justify-content: center;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 20px;
+            background: rgba(212, 175, 55, 0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        .stat-label {
+            color: #888;
+            font-weight: 500;
+        }
+
+        .stat-number {
+            font-weight: 700;
+            color: #d4af37;
+            font-size: 20px;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .tasks-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-bottom: 30px;
+        }
+
+        .task {
+            display: flex;
+            align-items: flex-start;
+            gap: 18px;
+            padding: 18px 22px;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.03) 0%, rgba(212, 175, 55, 0) 100%);
+            border-radius: 14px;
+            border: 1px solid rgba(212, 175, 55, 0.15);
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .task::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(180deg, #d4af37, #a88a2c);
+            border-radius: 14px 0 0 14px;
+            opacity: 0;
+            transition: opacity 0.35s ease;
+        }
+
+        .task:hover {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.08) 0%, rgba(212, 175, 55, 0.02) 100%);
+            border-color: rgba(212, 175, 55, 0.3);
+            transform: translateX(6px);
+        }
+
+        .task:hover::before {
+            opacity: 1;
+        }
+
+        .task.completed {
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.08) 0%, rgba(76, 175, 80, 0) 100%);
+            border-color: rgba(76, 175, 80, 0.2);
+            opacity: 0.65;
+        }
+
+        .task.completed::before {
+            background: linear-gradient(180deg, #4caf50, #388e3c);
+            opacity: 1;
+        }
+
+        .task.completed .time,
+        .task.completed .description {
+            color: #777;
+            text-decoration: line-through;
+        }
+
+        .checkbox {
+            width: 26px;
+            height: 26px;
+            border: 2px solid #d4af37;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 2px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: transparent;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .task:hover .checkbox {
+            background: rgba(212, 175, 55, 0.1);
+            box-shadow: 0 0 12px rgba(212, 175, 55, 0.2);
+        }
+
+        .task.completed .checkbox {
+            background: #4caf50;
+            border-color: #4caf50;
+            color: white;
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+        }
+
+        .task-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            min-width: 0;
+        }
+
+        .time {
+            font-size: 12px;
+            font-weight: 700;
+            color: #d4af37;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .description {
+            font-size: 15px;
+            color: #e8e8e8;
+            line-height: 1.5;
+            font-weight: 500;
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(212, 175, 55, 0.2);
+            color: #d4af37;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            margin-left: 10px;
+            margin-top: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+        }
+
+        .badge.teaching {
+            background: rgba(255, 107, 107, 0.15);
+            color: #ff8a80;
+            border-color: rgba(255, 107, 107, 0.3);
+        }
+
+        .badge.learning {
+            background: rgba(78, 205, 196, 0.15);
+            color: #80deea;
+            border-color: rgba(78, 205, 196, 0.3);
+        }
+
+        .badge.rest {
+            background: rgba(149, 225, 211, 0.15);
+            color: #80deea;
+            border-color: rgba(149, 225, 211, 0.3);
+        }
+
+        .progress-section {
+            margin: 30px 0;
+            padding: 25px;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.05) 0%, rgba(212, 175, 55, 0) 100%);
+            border-radius: 14px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        .progress-label {
+            font-size: 13px;
+            color: #d4af37;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(212, 175, 55, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #d4af37, #f4d03f);
+            border-radius: 4px;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 12px rgba(212, 175, 55, 0.4);
+        }
+
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            color: #777;
+            font-size: 12px;
+            border-top: 1px solid rgba(212, 175, 55, 0.15);
+            padding-top: 25px;
+            font-weight: 500;
+        }
+
+        .reset-btn {
+            margin-top: 25px;
+            padding: 12px 24px;
+            background: rgba(212, 175, 55, 0.1);
+            border: 1.5px solid rgba(212, 175, 55, 0.3);
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 13px;
+            color: #d4af37;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            width: 100%;
+        }
+
+        .reset-btn:hover {
+            background: rgba(212, 175, 55, 0.2);
+            border-color: rgba(212, 175, 55, 0.5);
+            box-shadow: 0 8px 20px rgba(212, 175, 55, 0.2);
+        }
+
+        .reset-btn:active {
+            transform: scale(0.98);
+        }
+
+        .motivational-emoji {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 30px 25px;
+                border-radius: 18px;
+            }
+
+            .title {
+                font-size: 20px;
+            }
+
+            .date {
+                font-size: 28px;
+            }
+
+            .task {
+                padding: 16px 18px;
+                gap: 14px;
+            }
+
+            .stats {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .stat {
+                padding: 12px 16px;
+                justify-content: space-between;
+            }
+
+            .progress-section {
+                padding: 18px;
+            }
+
+            .charm {
+                font-size: 30px;
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .container {
+            animation: fadeInDown 0.6s ease-out;
+        }
+
+        .task {
+            animation: fadeInDown 0.4s ease-out backwards;
+        }
+
+        .task:nth-child(1) { animation-delay: 0.1s; }
+        .task:nth-child(2) { animation-delay: 0.15s; }
+        .task:nth-child(3) { animation-delay: 0.2s; }
+        .task:nth-child(n+4) { animation-delay: 0.25s; }
+    </style>
+</head>
+<body>
+    <!-- Decorative elements -->
+    <div class="charm charm-left-1">✨</div>
+    <div class="charm charm-left-2">🌟</div>
+    <div class="charm charm-right-1">💫</div>
+    <div class="charm charm-right-2">⭐</div>
+
+    <div class="container">
+        <div class="header">
+            <div class="title">Dr. Romeet Saha</div>
+            <div class="date" id="dateDisplay"></div>
+            <div class="day" id="dayDisplay"></div>
+
+            <!-- Daily Motivational Quote -->
+            <div class="quote-section">
+                <div>
+                    <div class="motivational-emoji" id="quoteEmoji">💪</div>
+                    <div class="quote-text" id="quoteText">"Believe in yourself."</div>
+                    <div class="quote-author" id="quoteAuthor">- You</div>
+                </div>
+            </div>
+
+            <div class="stats">
+                <div class="stat">
+                    <span class="stat-label">Completed</span>
+                    <span class="stat-number" id="completedCount">0</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Total</span>
+                    <span class="stat-number" id="totalCount">0</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="progress-section">
+            <div class="progress-label">Daily Progress</div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+        </div>
+
+        <div class="tasks-list" id="tasksList"></div>
+
+        <button class="reset-btn" onclick="resetDay()">Reset Today's Progress</button>
+
+        <div class="footer">
+            Last updated: <span id="lastUpdate"></span>
+        </div>
+    </div>
+
+    <script>
+        // Daily motivational quotes
+        const quotes = [
+            { text: "The only way to do great work is to love what you do.", author: "Steve Jobs", emoji: "💪" },
+            { text: "Success is not final, failure is not fatal. It is the courage to continue that counts.", author: "Winston Churchill", emoji: "🔥" },
+            { text: "Believe you can and you're halfway there.", author: "Theodore Roosevelt", emoji: "🌟" },
+            { text: "The future belongs to those who believe in the beauty of their dreams.", author: "Eleanor Roosevelt", emoji: "✨" },
+            { text: "It is during our darkest moments that we must focus to see the light.", author: "Aristotle", emoji: "💡" },
+            { text: "The only impossible journey is the one you never begin.", author: "Tony Robbins", emoji: "🚀" },
+            { text: "You are never too old to set another goal or to dream a new dream.", author: "C.S. Lewis", emoji: "🎯" },
+            { text: "Excellence is not a skill. It's an attitude.", author: "Ralph Marston", emoji: "👑" },
+            { text: "The expert in anything was once a beginner.", author: "Helen Hayes", emoji: "📚" },
+            { text: "Your limitation—it's only your imagination.", author: "Unknown", emoji: "🌈" },
+            { text: "Push yourself, because no one else is going to do it for you.", author: "Unknown", emoji: "💎" },
+            { text: "Sometimes we're tested not to show our weaknesses, but to discover our strengths.", author: "Unknown", emoji: "⚡" },
+            { text: "Great things never come from comfort zones.", author: "Unknown", emoji: "🏆" },
+            { text: "Dream bigger. Do bigger.", author: "Unknown", emoji: "🌠" },
+            { text: "Success is the sum of small efforts repeated day in and day out.", author: "Robert Collier", emoji: "📈" },
+            { text: "Don't stop when you're tired. Stop when you're done.", author: "Unknown", emoji: "🎖️" },
+            { text: "The pain you feel today will be the strength you feel tomorrow.", author: "Unknown", emoji: "💪" },
+            { text: "Your only limit is you.", author: "Unknown", emoji: "🌟" },
+            { text: "Wake up with determination. Go to bed with satisfaction.", author: "Unknown", emoji: "😴" },
+            { text: "Do something today that your future self will thank you for.", author: "Sean Patrick Flanery", emoji: "🙏" }
+        ];
+
+        const schedules = {
+            0: [ // Sunday
+                { time: "5:15-6:00 AM", task: "Wake up, freshen up, feed puppy", type: "routine" },
+                { time: "6:00-6:45 AM", task: "Workout", type: "priority" },
+                { time: "6:45-12:00 PM", task: "🔥 EXTENDED LEARNING & DEEP WORK BLOCK", type: "learning" },
+                { time: "12:00-1:00 PM", task: "Lunch break", type: "routine" },
+                { time: "1:00-5:00 PM", task: "🔥 EXTENDED LEARNING & DEEP WORK BLOCK", type: "learning" },
+                { time: "5:00-6:00 PM", task: "Rest / personal care", type: "routine" },
+                { time: "6:00-7:00 PM", task: "Stock Analysis + ChatRoom (if needed)", type: "learning" },
+                { time: "7:00-7:15 PM", task: "BREAK", type: "rest" },
+                { time: "7:15-7:45 PM", task: "A.L. Brooks Trading View", type: "learning" },
+                { time: "7:45-8:00 PM", task: "BREAK", type: "rest" },
+                { time: "8:00-8:30 PM", task: "Dinner", type: "routine" },
+                { time: "8:30-9:15 PM", task: "Trading Book Reading", type: "learning" },
+                { time: "9:15-9:30 PM", task: "BREAK", type: "rest" },
+                { time: "9:30-10:15 PM", task: "Personal Dev Reading (Hyperfocus)", type: "learning" },
+                { time: "10:15-10:30 PM", task: "Wind down + Sleep prep", type: "routine" },
+                { time: "10:30 PM", task: "SLEEP", type: "rest" }
+            ],
+            1: [ // Monday
+                { time: "5:15-6:00 AM", task: "Wake up, freshen up, feed puppy", type: "routine" },
+                { time: "6:00-6:45 AM", task: "Workout", type: "priority" },
+                { time: "6:45-7:00 AM", task: "Personal care", type: "routine" },
+                { time: "7:00-7:45 AM", task: "ChatRoom Management", type: "teaching" },
+                { time: "7:45-8:40 AM", task: "Get ready, breakfast", type: "routine" },
+                { time: "8:40-9:00 AM", task: "Office commute", type: "routine" },
+                { time: "9:00-10:00 AM", task: "🎓 PLANTATION TECHNOLOGY (Forestry) - PG 4th", type: "teaching" },
+                { time: "10:00-11:30 AM", task: "💬 ChatRoom Query Answering", type: "teaching" },
+                { time: "11:30-12:30 PM", task: "Free time on campus", type: "routine" },
+                { time: "12:30-1:30 PM", task: "ChatRoom Management", type: "teaching" },
+                { time: "1:30-5:20 PM", task: "On campus / office time", type: "routine" },
+                { time: "5:20-5:30 PM", task: "Office commute", type: "routine" },
+                { time: "5:30-6:00 PM", task: "Rest, freshen up", type: "routine" },
+                { time: "6:00-7:00 PM", task: "ChatRoom Management + Stock Analysis", type: "teaching" },
+                { time: "7:00-7:15 PM", task: "BREAK", type: "rest" },
+                { time: "7:15-7:45 PM", task: "A.L. Brooks Trading View", type: "learning" },
+                { time: "7:45-8:00 PM", task: "BREAK", type: "rest" },
+                { time: "8:00-8:30 PM", task: "Dinner", type: "routine" },
+                { time: "8:30-9:15 PM", task: "Trading Book Reading", type: "learning" },
+                { time: "9:15-9:30 PM", task: "BREAK", type: "rest" },
+                { time: "9:30-10:15 PM", task: "Personal Dev Reading (Hyperfocus)", type: "learning" },
+                { time: "10:15-10:30 PM", task: "Wind down + Sleep prep", type: "routine" },
+                { time: "10:30 PM", task: "SLEEP", type: "rest" }
+            ],
+            2: [ // Tuesday
+                { time: "5:15-6:00 AM", task: "Wake up, freshen up, feed puppy", type: "routine" },
+                { time: "6:00-6:45 AM", task: "Workout", type: "priority" },
+                { time: "6:45-7:00 AM", task: "Personal care", type: "routine" },
+                { time: "7:00-7:45 AM", task: "ChatRoom Management", type: "teaching" },
+                { time: "7:45-8:40 AM", task: "Get ready, breakfast", type: "routine" },
+                { time: "8:40-9:00 AM", task: "Office commute", type: "routine" },
+                { time: "9:00-10:00 AM", task: "🎓 PLANTATION TECHNOLOGY (Forestry) - PG 4th", type: "teaching" },
+                { time: "10:00-11:30 AM", task: "💬 ChatRoom Query Answering", type: "teaching" },
+                { time: "11:30-12:30 PM", task: "Free time on campus", type: "routine" },
+                { time: "12:30-1:30 PM", task: "ChatRoom Management", type: "teaching" },
+                { time: "1:30-2:45 PM", task: "On campus / office time", type: "routine" },
+                { time: "2:45-3:40 PM", task: "🎓 MINOR - V (Botany) - UG 4th", type: "teaching" },
+                { time: "3:40-5:20 PM", task: "On campus / office time", type: "routine" },
+                { time: "5:20-5:30 PM", task: "Office commute", type: "routine" },
+                { time: "5:30-6:00 PM", task: "Rest, freshen up", type: "routine" },
+                { time: "6:00-7:00 PM", task: "ChatRoom Management + Stock Analysis", type: "teaching" },
+                { time: "7:00-7:15 PM", task: "BREAK", type: "rest" },
+                { time: "7:15-7:45 PM", task: "A.L. Brooks Trading View", type: "learning" },
+                { time: "7:45-8:00 PM", task: "BREAK", type: "rest" },
+                { time: "8:00-8:30 PM", task: "Dinner", type: "routine" },
+                { time: "8:30-9:15 PM", task: "Trading Book Reading", type: "learning" },
+                { time: "9:15-9:30 PM", task: "BREAK", type: "rest" },
+                { time: "9:30-10:15 PM", task: "Personal Dev Reading (Hyperfocus)", type: "learning" },
+                { time: "10:15-10:30 PM", task: "Wind down + Sleep prep", type: "routine" },
+                { time: "10:30 PM", task: "SLEEP", type: "rest" }
+            ],
+            3: [ // Wednesday
+                { time: "5:15-6:00 AM", task: "Wake up, freshen up, feed puppy", type: "routine" },
+                { time: "6:00-6:45 AM", task: "Workout", type: "priority" },
+                { time: "6:45-7:00 AM", task: "Personal care", type: "routine" },
+                { time: "7:00-7:45 AM", task: "ChatRoom Management", type: "teaching" },
+                { time: "7:45-8:40 AM", task: "Get ready, breakfast", type: "routine" },
+                { time: "8:40-9:00 AM", task: "Office commute", type: "routine" },
+                { time: "9:00-10:00 AM", task: "🎓 PLANTATION TECHNOLOGY (Forestry) - PG 4th", type: "teaching" },
+                { time: "10:00-11:00 AM", task: "Free time on campus", type: "routine" },
+                { time: "11:00-12:00 PM", task: "🎓 MINOR - V (Botany) - UG 4th", type: "teaching" },
+                { time: "12:00-12:30 PM", task: "Free time on campus", type: "routine" },
+                { time: "12:30-1:30 PM", task: "ChatRoom Management", type: "teaching" },
+                { time: "1:30-3:00 PM", task: "💬 ChatRoom Query Answering", type: "teaching" },
+                { time: "3:00-5:20 PM", task: "On campus / office time", type: "routine" },
+                { time: "5:20-5:30 PM", task: "Office commute", type: "routine" },
+                { time: "5:30-6:00 PM", task: "Rest, freshen up", type: "routine" },
+                { time: "6:00-7:00 PM", task: "ChatRoom Management + Stock Analysis", type: "teaching" },
+                { time: "7:00-7:15 PM", task: "BREAK", type: "rest" },
+                { time: "7:15-7:45 PM", task: "A.L. Brooks Trading View", type: "learning" },
+                { time: "7:45-8:00 PM", task: "BREAK", type: "rest" },
+                { time: "8:00-8:30 PM", task: "Dinner", type: "routine" },
+                { time: "8:30-9:15 PM", task: "Trading Book Reading", type: "learning" },
+                { time: "9:15-9:30 PM", task: "BREAK", type: "rest" },
+                { time: "9:30-10:15 PM", task: "Personal Dev Reading (Hyperfocus)", type: "learning" },
+                { time: "10:15-10:30 PM", task: "Wind down + Sleep prep", type: "routine" },
+                { time: "10:30 PM", task: "SLEEP", type: "rest" }
+            ],
+            4: [ // Thursday
+                { time: "5:15-6:00 AM", task: "Wake up, freshen up, feed puppy", type: "routine" },
+                { time: "6:00-6:45 AM", task: "Workout", type: "priority" },
+                { time: "6:45-7:00 AM", task: "Personal care", type: "routine" },
+                { time: "7:00-7:45 AM", task: "ChatRoom Management", type: "teaching" },
+                { time: "7:45-12:30 PM", task: "🔥 EXTENDED LEARNING BLOCK / Free Time", type: "learning" },
+                { time: "12:30-1:30 PM", task: "ChatRoom Management", type: "teaching" },
+                { time: "1:30-3:00 PM", task: "💬 ChatRoom Query Answering", type: "teaching" },
+                { time: "3:00-3:40 PM", task: "Free time / campus work", type: "routine" },
+                { time: "3:40-4:35 PM", task: "🎓 FOREST MANAGEMENT (Forestry) - UG 4th", type: "teaching" },
+                { time: "4:35-5:20 PM", task: "On campus / travel", type: "routine" },
+                { time: "5:20-5:30 PM", task: "Office commute", type: "routine" },
+                { time: "5:30-6:00 PM", task: "Rest, freshen up", type: "routine" },
+                { time: "6:00-7:00 PM", task: "ChatRoom Management + Stock Analysis", type: "teaching" },
+                { time: "7:00-7:15 PM", task: "BREAK", type: "rest" },
+                { time: "7:15-7:45 PM", task: "A.L. Brooks Trading View", type: "learning" },
+                { time: "7:45-8:00 PM", task: "BREAK", type: "rest" },
+                { time: "8:00-8:30 PM", task: "Dinner", type: "routine" },
+                { time: "8:30-9:15 PM", task: "Trading Book Reading", type: "learning" },
+                { time: "9:15-9:30 PM", task: "BREAK", type: "rest" },
+                { time: "9:30-10:15 PM", task: "Personal Dev Reading (Hyperfocus)", type: "learning" },
+                { time: "10:15-10:30 PM", task: "Wind down + Sleep prep", type: "routine" },
+                { time: "10:30 PM", task: "SLEEP", type: "rest" }
+            ],
+            5: [ // Friday
+                { time: "5:15-6:00 AM", task: "Wake up, freshen up, feed puppy", type: "routine" },
+                { time: "6:00-6:45 AM", task: "Workout", type: "priority" },
+                { time: "6:45-7:00 AM", task: "Personal care", type: "routine" },
+                { time: "7:00-7:45 AM", task: "ChatRoom Management", type: "teaching" },
+                { time: "7:45-8:40 AM", task: "Get ready, breakfast", type: "routine" },
+                { time: "8:40-9:00 AM", task: "Office commute", type: "routine" },
+                { time: "9:00-10:00 AM", task: "🎓 FOREST MANAGEMENT (Forestry) - UG 4th", type: "teaching" },
+                { time: "10:00-11:00 AM", task: "🎓 MINOR - V (Botany) - UG 4th", type: "teaching" },
+                { time: "11:00-12:00 PM", task: "🎓 PHD COURSEWORK - UG 4th", type: "teaching" },
+                { time: "12:00-12:30 PM", task: "Campus / on campus", type: "routine" },
+                { time: "12:30-1:30 PM", task: "ChatRoom Management", type: "teaching" },
+                { time: "1:30-3:00 PM", task: "💬 ChatRoom Query Answering", type: "teaching" },
+                { time: "3:00-5:20 PM", task: "🔥 EXTENDED LEARNING BLOCK / Free Time", type: "learning" },
+                { time: "5:20-5:30 PM", task: "Office commute", type: "routine" },
+                { time: "5:30-6:00 PM", task: "Rest, freshen up", type: "routine" },
+                { time: "6:00-7:00 PM", task: "ChatRoom Management + Stock Analysis", type: "teaching" },
+                { time: "7:00-7:15 PM", task: "BREAK", type: "rest" },
+                { time: "7:15-7:45 PM", task: "A.L. Brooks Trading View", type: "learning" },
+                { time: "7:45-8:00 PM", task: "BREAK", type: "rest" },
+                { time: "8:00-8:30 PM", task: "Dinner", type: "routine" },
+                { time: "8:30-9:15 PM", task: "Trading Book Reading", type: "learning" },
+                { time: "9:15-9:30 PM", task: "BREAK", type: "rest" },
+                { time: "9:30-10:15 PM", task: "Personal Dev Reading (Hyperfocus)", type: "learning" },
+                { time: "10:15-10:30 PM", task: "Wind down + Sleep prep", type: "routine" },
+                { time: "10:30 PM", task: "SLEEP", type: "rest" }
+            ],
+            6: [ // Saturday
+                { time: "5:15-6:00 AM", task: "Wake up, freshen up, feed puppy", type: "routine" },
+                { time: "6:00-6:45 AM", task: "Workout", type: "priority" },
+                { time: "6:45-8:15 AM", task: "🤖 AI Learning + TradingView PineScript", type: "learning" },
+                { time: "8:15-9:45 AM", task: "📊 Stock Market Deep Study", type: "learning" },
+                { time: "9:45-10:00 AM", task: "BREAK", type: "rest" },
+                { time: "10:00-12:00 PM", task: "📈 Stock Analysis + Trading Strategy", type: "learning" },
+                { time: "12:00-1:00 PM", task: "Lunch break", type: "routine" },
+                { time: "1:00-3:00 PM", task: "📊 Stock Market Advanced Topics", type: "learning" },
+                { time: "3:00-4:00 PM", task: "📚 Self-Help Book Reading (Hyperfocus)", type: "learning" },
+                { time: "4:00-5:00 PM", task: "🔬 Personal Projects & Research", type: "learning" },
+                { time: "5:00-6:00 PM", task: "Rest / personal care / hobby", type: "routine" },
+                { time: "6:00-7:00 PM", task: "Stock Analysis + ChatRoom (if needed)", type: "learning" },
+                { time: "7:00-7:15 PM", task: "BREAK", type: "rest" },
+                { time: "7:15-7:45 PM", task: "A.L. Brooks Trading View", type: "learning" },
+                { time: "7:45-8:00 PM", task: "BREAK", type: "rest" },
+                { time: "8:00-8:30 PM", task: "Dinner", type: "routine" },
+                { time: "8:30-9:15 PM", task: "Trading Book Reading", type: "learning" },
+                { time: "9:15-9:30 PM", task: "BREAK", type: "rest" },
+                { time: "9:30-10:15 PM", task: "Personal Dev Reading (Hyperfocus)", type: "learning" },
+                { time: "10:15-10:30 PM", task: "Wind down + Sleep prep", type: "routine" },
+                { time: "10:30 PM", task: "SLEEP", type: "rest" }
+            ]
+        };
+
+        const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+        function getRandomQuote() {
+            const today = new Date();
+            const dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / 86400000);
+            const quoteIndex = dayOfYear % quotes.length;
+            return quotes[quoteIndex];
+        }
+
+        function formatDate() {
+            const today = new Date();
+            const dateStr = today.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+            const dayStr = days[today.getDay()];
+            return { dateStr, dayStr, dayIndex: today.getDay() };
+        }
+
+        function loadTasks() {
+            const { dateStr, dayStr, dayIndex } = formatDate();
+            const tasks = schedules[dayIndex];
+            const quote = getRandomQuote();
+
+            document.getElementById('dateDisplay').textContent = dateStr;
+            document.getElementById('dayDisplay').textContent = dayStr.toUpperCase();
+            document.getElementById('quoteText').textContent = `"${quote.text}"`;
+            document.getElementById('quoteAuthor').textContent = `- ${quote.author}`;
+            document.getElementById('quoteEmoji').textContent = quote.emoji;
+
+            const tasksList = document.getElementById('tasksList');
+            tasksList.innerHTML = '';
+
+            tasks.forEach((task, index) => {
+                const taskEl = document.createElement('div');
+                const taskId = `task-${dayIndex}-${index}`;
+                const isCompleted = localStorage.getItem(taskId) === 'true';
+
+                taskEl.className = `task ${isCompleted ? 'completed' : ''}`;
+                taskEl.innerHTML = `
+                    <div class="checkbox" onclick="toggleTask('${taskId}', this.parentElement)">
+                        ${isCompleted ? '✓' : ''}
+                    </div>
+                    <div class="task-content">
+                        <div class="time">${task.time}</div>
+                        <div class="description">
+                            ${task.task}
+                            <span class="badge ${task.type === 'teaching' ? 'teaching' : task.type === 'learning' ? 'learning' : 'rest'}">
+                                ${task.type.charAt(0).toUpperCase() + task.type.slice(1)}
+                            </span>
+                        </div>
+                    </div>
+                `;
+                tasksList.appendChild(taskEl);
+
+                if (isCompleted) {
+                    taskEl.classList.add('completed');
+                }
+            });
+
+            updateStats(tasks);
+            updateLastUpdate();
+        }
+
+        function toggleTask(taskId, taskEl) {
+            const isCompleted = localStorage.getItem(taskId) === 'true';
+            localStorage.setItem(taskId, !isCompleted);
+
+            const { dayIndex } = formatDate();
+            const tasks = schedules[dayIndex];
+            loadTasks();
+        }
+
+        function updateStats(tasks) {
+            const { dayIndex } = formatDate();
+            let completed = 0;
+
+            tasks.forEach((_, index) => {
+                const taskId = `task-${dayIndex}-${index}`;
+                if (localStorage.getItem(taskId) === 'true') {
+                    completed++;
+                }
+            });
+
+            const total = tasks.length;
+            const percentage = (completed / total) * 100;
+
+            document.getElementById('completedCount').textContent = completed;
+            document.getElementById('totalCount').textContent = total;
+            document.getElementById('progressFill').style.width = percentage + '%';
+        }
+
+        function resetDay() {
+            const { dayIndex } = formatDate();
+            const tasks = schedules[dayIndex];
+
+            if (confirm('Reset all tasks for today?')) {
+                tasks.forEach((_, index) => {
+                    const taskId = `task-${dayIndex}-${index}`;
+                    localStorage.removeItem(taskId);
+                });
+                loadTasks();
+            }
+        }
+
+        function updateLastUpdate() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+            document.getElementById('lastUpdate').textContent = timeStr;
+        }
+
+        window.addEventListener('load', loadTasks);
+
+        setInterval(() => {
+            const now = new Date();
+            if (now.getHours() === 0 && now.getMinutes() === 0) {
+                loadTasks();
+            }
+        }, 60000);
+    </script>
+</body>
+</html>
